@@ -3,7 +3,7 @@ function getCoursesList() {
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
         var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
-
+        JSONresponseArray.sort(function(a, b){return b.enrollment_term_id - a.enrollment_term_id});
         // get div for course list
         var pgh = document.getElementById('courses');
 
