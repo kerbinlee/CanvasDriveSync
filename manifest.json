@@ -1,0 +1,22 @@
+{
+  "name": "Canvas-Google Drive Sync",
+  "description" : "Synchronizes UC Davis Canvas LMS files to Google Drive",
+  "version": "1.0",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "ic_sync_black_24dp_2x.png"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      },
+      "description": "Opens popup.html"
+    }
+  },
+  "permissions": [
+    "https://canvas.ucdavis.edu/"
+  ]
+}
