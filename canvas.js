@@ -1,4 +1,4 @@
-function getFilesList(courseDiv, courseId) {
+function getFilesList(page, courseDiv, courseId) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
@@ -7,21 +7,26 @@ function getFilesList(courseDiv, courseId) {
         // add file names to course div
         for (i = 0; i < JSONresponseArray.length; i++) {
             var node = document.createElement('p');
-            console.log(JSONresponseArray[i].display_name);
             var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
             node.appendChild(nodeText);
             courseDiv.appendChild(node);
+        }
+
+        // if results were returned, get next page of files
+        if (JSONresponseArray.length > 0) {
+            getFilesList(page + 1, courseDiv, courseId);
         }
     }
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
 	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + courseId + '/files?page=1&per_page=100');
+	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + courseId
+        + '/files?page=' + page + '&per_page=100');
     request.send();
 }
 
-function getCoursesList() {
+function getCoursesList(page) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
@@ -43,16 +48,22 @@ function getCoursesList() {
 
                 var courseId = JSONresponseArray[i].id;
                 // get list of files for course
-                getFilesList(courseDiv, courseId);
+                getFilesList(1, courseDiv, courseId);
             }
+        }
+
+        // if results were returned, get next page of courses
+        if (JSONresponseArray.length > 0) {
+            getCoursesList(page + 1);
         }
     }
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
 	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/?page=1&per_page=100');
+	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/?page=' + page
+        + '&per_page=100');
     request.send();
 }
 
-getCoursesList();
+getCoursesList(1);
