@@ -1,3 +1,17 @@
+// to create objects for holding course information
+function course(courseJSONobj, courseDiv) {
+    this.courseJSON = courseJSONobj;
+    this.div = courseDiv;
+    this.folderRootId;
+    this.foldersMap;
+    this.filesList;
+}
+
+function folder(folderJSONbject, div) {
+    this.folderJSONbject = folderJSONbject;
+    this.div = div;
+}
+
 function getFilesList(page, courseDiv, courseId) {
     // function that is called when data is returned
     function requestListener() {
@@ -6,10 +20,12 @@ function getFilesList(page, courseDiv, courseId) {
 
         // add file names to course div
         for (i = 0; i < JSONresponseArray.length; i++) {
-            var node = document.createElement('p');
+            var nodeDiv = document.createElement('div');
+            var nodeP = document.createElement('p');
             var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
-            node.appendChild(nodeText);
-            courseDiv.appendChild(node);
+            nodeP.appendChild(nodeText);
+            nodeDiv.appendChild(nodep);
+            course.div.appendChild(nodediv);
         }
 
         // if results were returned, get next page of files
@@ -23,6 +39,50 @@ function getFilesList(page, courseDiv, courseId) {
 	request.addEventListener('load', requestListener);
 	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + courseId
         + '/files?page=' + page + '&per_page=100');
+    request.send();
+}
+
+function getFoldersList(page, course) {
+    // function that is called when data is returned
+    function requestListener() {
+        // remove while(1); from beginning of returned JSON string
+        var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
+
+        // create foldersMap if this is the first time getting folders for course
+        if (course.foldersMap === undefined) {
+            course.foldersMap = new Map();
+        }
+
+        // add folder names to course div
+        for (i = 0; i < JSONresponseArray.length; i++) {
+            var nodeDiv = document.createElement('div');
+            var nodeP = document.createElement('p');
+            var nodeText = document.createTextNode(JSONresponseArray[i].name);
+            nodeP.appendChild(nodeText);
+            nodeDiv.appendChild(nodeP);
+            course.div.appendChild(nodeDiv);
+
+            // add folder to map with id as key and folder object as value
+            var folderObj = new folder(JSONresponseArray[i], nodeDiv);
+            course.foldersMap.set(JSONresponseArray[i].id, folderObj);
+
+            // if current folder does not have a parent, set it as the root folder
+            if (JSONresponseArray[i].parent_folder_id == null) {
+                course.folderRootId = JSONresponseArray[i].id;
+            }
+        }
+
+        // if results were returned, get next page of files
+        if (JSONresponseArray.length > 0) {
+            getFoldersList(page + 1, course);
+        }
+    }
+
+	var request = new XMLHttpRequest();
+    // call requestListener when request is loaded
+	request.addEventListener('load', requestListener);
+	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + course.courseJSON.id
+        + '/folders?page=' + page + '&per_page=100');
     request.send();
 }
 
@@ -41,14 +101,16 @@ function getCoursesList(page) {
             if (JSONresponseArray[i].hasOwnProperty('name')) {
                 var courseDiv = document.createElement('div');
                 var courseNameHeader = document.createElement('h1');
+                var courseNameP = document.createElement('p');
                 var courseName = document.createTextNode(JSONresponseArray[i].name);
-                courseNameHeader.appendChild(courseName);
+                courseNameP.appendChild(courseName);
+                courseNameHeader.appendChild(courseNameP);
                 courseDiv.appendChild(courseNameHeader);
                 coursesDiv.appendChild(courseDiv);
 
-                var courseId = JSONresponseArray[i].id;
-                // get list of files for course
-                getFilesList(1, courseDiv, courseId);
+                var courseObj = new course(JSONresponseArray[i], courseDiv);
+                // get list of folders for course
+                getFoldersList(1, courseObj);
             }
         }
 
