@@ -7,37 +7,39 @@ function course(courseJSONobj, courseDiv) {
     this.filesList;
 }
 
+// to create ojects for holding folder JSON object and its corresponding div element
 function folder(folderJSONbject, div) {
     this.folderJSONbject = folderJSONbject;
     this.div = div;
 }
 
-function getFilesList(page, courseDiv, courseId) {
+function getFilesList(page, course) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
         var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
 
-        // add file names to course div
+        // add file names to respective folder div
         for (i = 0; i < JSONresponseArray.length; i++) {
             var nodeDiv = document.createElement('div');
             var nodeP = document.createElement('p');
             var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
             nodeP.appendChild(nodeText);
-            nodeDiv.appendChild(nodep);
-            course.div.appendChild(nodediv);
+            nodeDiv.appendChild(nodeP);
+            var folderDiv = course.foldersMap.get(JSONresponseArray[i].folder_id).div;
+            folderDiv.appendChild(nodeDiv);
         }
 
         // if results were returned, get next page of files
         if (JSONresponseArray.length > 0) {
-            getFilesList(page + 1, courseDiv, courseId);
+            getFilesList(page + 1, course);
         }
     }
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
 	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + courseId
+	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + course.courseJSON.id
         + '/files?page=' + page + '&per_page=100');
     request.send();
 }
@@ -72,9 +74,11 @@ function getFoldersList(page, course) {
             }
         }
 
-        // if results were returned, get next page of files
+        // if results were returned, get next page of folders, otherwise get files
         if (JSONresponseArray.length > 0) {
             getFoldersList(page + 1, course);
+        } else {
+            getFilesList(1, course);
         }
     }
 
