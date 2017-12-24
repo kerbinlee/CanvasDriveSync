@@ -26,8 +26,14 @@ function getFilesList(page, course) {
             var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
             nodeP.appendChild(nodeText);
             nodeDiv.appendChild(nodeP);
-            var folderDiv = course.foldersMap.get(JSONresponseArray[i].folder_id).div;
-            folderDiv.appendChild(nodeDiv);
+
+            // if file is located in root rolder, add file directly to course div
+            if (JSONresponseArray[i].folder_id == course.folderRootId) {
+                course.div.appendChild(nodeDiv);
+            } else { // else add files to respective folder div
+                var folderDiv = course.foldersMap.get(JSONresponseArray[i].folder_id).div;
+                folderDiv.appendChild(nodeDiv);
+            }
         }
 
         // if results were returned, get next page of files
@@ -57,20 +63,20 @@ function getFoldersList(page, course) {
 
         // add folder names to course div
         for (i = 0; i < JSONresponseArray.length; i++) {
-            var nodeDiv = document.createElement('div');
-            var nodeP = document.createElement('p');
-            var nodeText = document.createTextNode(JSONresponseArray[i].name);
-            nodeP.appendChild(nodeText);
-            nodeDiv.appendChild(nodeP);
-            course.div.appendChild(nodeDiv);
-
-            // add folder to map with id as key and folder object as value
-            var folderObj = new folder(JSONresponseArray[i], nodeDiv);
-            course.foldersMap.set(JSONresponseArray[i].id, folderObj);
-
             // if current folder does not have a parent, set it as the root folder
             if (JSONresponseArray[i].parent_folder_id == null) {
                 course.folderRootId = JSONresponseArray[i].id;
+            } else { // else add folder name to course div
+                var nodeDiv = document.createElement('div');
+                var nodeP = document.createElement('p');
+                var nodeText = document.createTextNode(JSONresponseArray[i].name);
+                nodeP.appendChild(nodeText);
+                nodeDiv.appendChild(nodeP);
+                course.div.appendChild(nodeDiv);
+
+                // add folder to map with id as key and folder object as value
+                var folderObj = new folder(JSONresponseArray[i], nodeDiv);
+                course.foldersMap.set(JSONresponseArray[i].id, folderObj);
             }
         }
 
