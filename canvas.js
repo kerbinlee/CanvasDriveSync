@@ -7,10 +7,20 @@ function course(courseJSONobj, courseDiv) {
     this.filesList;
 }
 
-// to create ojects for holding folder JSON object and its corresponding div element
-function folder(folderJSONbject, div) {
-    this.folderJSONbject = folderJSONbject;
+// to create objects for holding folder JSON object and its corresponding div element
+function folder(folderJSONobject, div) {
+    this.folderJSONobject = folderJSONobject;
     this.div = div;
+}
+
+function displayFolders(course) {
+    course.foldersMap.forEach(function(folder, id) {
+        // if folder is not root, append folder div to parent folder's div
+        if (folder.folderJSONobject.parent_folder_id != null) {
+            var parentFolderDiv = course.foldersMap.get(folder.folderJSONobject.parent_folder_id).div;
+            parentFolderDiv.appendChild(folder.div);
+        }
+    });
 }
 
 function getFilesList(page, course) {
@@ -19,7 +29,7 @@ function getFilesList(page, course) {
         // remove while(1); from beginning of returned JSON string
         var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
 
-        // add file names to respective folder div
+        // create file name div
         for (i = 0; i < JSONresponseArray.length; i++) {
             var nodeDiv = document.createElement('div');
             var nodeP = document.createElement('p');
@@ -61,18 +71,21 @@ function getFoldersList(page, course) {
             course.foldersMap = new Map();
         }
 
-        // add folder names to course div
+        // add folder names to folder map in course object
         for (i = 0; i < JSONresponseArray.length; i++) {
             // if current folder does not have a parent, set it as the root folder
             if (JSONresponseArray[i].parent_folder_id == null) {
                 course.folderRootId = JSONresponseArray[i].id;
-            } else { // else add folder name to course div
+
+                // add folder to map with id as key and folder object as value
+                var folderObj = new folder(JSONresponseArray[i], course.div);
+                course.foldersMap.set(JSONresponseArray[i].id, folderObj);
+            } else { // else create div for folder and add to map
                 var nodeDiv = document.createElement('div');
                 var nodeP = document.createElement('p');
                 var nodeText = document.createTextNode(JSONresponseArray[i].name);
                 nodeP.appendChild(nodeText);
                 nodeDiv.appendChild(nodeP);
-                course.div.appendChild(nodeDiv);
 
                 // add folder to map with id as key and folder object as value
                 var folderObj = new folder(JSONresponseArray[i], nodeDiv);
@@ -80,10 +93,11 @@ function getFoldersList(page, course) {
             }
         }
 
-        // if results were returned, get next page of folders, otherwise get files
+        // if results were returned, get next page of folders
         if (JSONresponseArray.length > 0) {
             getFoldersList(page + 1, course);
-        } else {
+        } else { // else display the folders and then get files
+            displayFolders(course);
             getFilesList(1, course);
         }
     }
