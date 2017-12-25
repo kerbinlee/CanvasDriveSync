@@ -32,10 +32,13 @@ function getFilesList(page, course) {
         // create file name div
         for (i = 0; i < JSONresponseArray.length; i++) {
             var nodeDiv = document.createElement('div');
-            var nodeP = document.createElement('p');
-            var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
-            nodeP.appendChild(nodeText);
-            nodeDiv.appendChild(nodeP);
+            // var nodeP = document.createElement('p');
+            var nodeA = document.createElement('a');
+            nodeA.setAttribute('href', JSONresponseArray[i].url);
+            // var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
+            nodeA.innerHTML = JSONresponseArray[i].display_name;
+            // nodeP.appendChild(nodeA);
+            nodeDiv.appendChild(nodeA);
 
             // if file is located in root rolder, add file directly to course div
             if (JSONresponseArray[i].folder_id == course.folderRootId) {
