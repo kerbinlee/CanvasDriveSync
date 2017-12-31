@@ -1,17 +1,27 @@
 {
-    "name": "Canvas-Google Drive Sync",
+    "name": "Canvas-Drive Sync",
     "description" : "Synchronizes UC Davis Canvas LMS files to Google Drive",
-    "version": "1.0",
+    "version": "0.0.0.1",
     "manifest_version": 2,
-    "browser_action": {
-        "default_icon": "ic_sync_black_24dp_2x.png"
-    },
-    "permissions": [
-        "https://canvas.ucdavis.edu/"
-    ],
     "background": {
         "scripts": [
             "background.js"
         ]
-    }
+    },
+    "browser_action": {
+        "default_icon": "ic_sync_black_24dp_2x.png"
+    },
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsafgDHTBqMAUP76c713KkeyeYoMxEcZLqFxWQpb9HzcxSmsVZFvKoC4MCuUZFgKj52qPxbrcbhiP0dPwUKYK5TjqIljA3OrDyD7DD36kibtQwke097bS9UtLUx5MLtpnYJmC7lzHjoueqvjasZ9DmaWsuO2QJEAZDrsjAd2QT7VFHiQLm2P7ys2j45gXX7znmchlbn3t6E5PDwyn0bpaIsnW/0FtqS8jUgFs7UdxFD8zYGu18twN5VqrwhPgUaLNhYdWvL13YtfhEshR4LnoWAFTVW3jxkAixCqNccG2BZfxMDuo2aKoJMeYs7Gafk9l8MirFJpfxRt76L7DTVTKxwIDAQAB",
+    "oauth2": {
+        "client_id": "386193826857-rarrpv572ur6ho4ha334k3v6kehjss8q.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/drive"
+        ]
+    },
+    "permissions": [
+        "identity",
+        "tabs",
+        "https://canvas.ucdavis.edu/",
+        "*://*.googleapis.com/*"
+    ]
 }
