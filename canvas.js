@@ -27,14 +27,14 @@ function getFilesList(page, course) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
-        var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
+        var JSONresponseArray = JSON.parse(this.responseText.split("while(1);", 2)[1]);
 
         // create file name div
         for (i = 0; i < JSONresponseArray.length; i++) {
-            var nodeDiv = document.createElement('div');
-            // var nodeP = document.createElement('p');
-            var nodeA = document.createElement('a');
-            nodeA.setAttribute('href', JSONresponseArray[i].url);
+            var nodeDiv = document.createElement("div");
+            // var nodeP = document.createElement("p");
+            var nodeA = document.createElement("a");
+            nodeA.setAttribute("href", JSONresponseArray[i].url);
             // var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
             nodeA.innerHTML = JSONresponseArray[i].display_name;
             // nodeP.appendChild(nodeA);
@@ -57,9 +57,9 @@ function getFilesList(page, course) {
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
-	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + course.courseJSON.id
-        + '/files?page=' + page + '&per_page=100');
+	request.addEventListener("load", requestListener);
+	request.open("GET", "https://canvas.ucdavis.edu/api/v1/courses/" + course.courseJSON.id
+        + "/files?page=" + page + "&per_page=100");
     request.send();
 }
 
@@ -67,7 +67,7 @@ function getFoldersList(page, course) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
-        var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
+        var JSONresponseArray = JSON.parse(this.responseText.split("while(1);", 2)[1]);
 
         // create foldersMap if this is the first time getting folders for course
         if (course.foldersMap === undefined) {
@@ -84,8 +84,8 @@ function getFoldersList(page, course) {
                 var folderObj = new folder(JSONresponseArray[i], course.div);
                 course.foldersMap.set(JSONresponseArray[i].id, folderObj);
             } else { // else create div for folder and add to map
-                var nodeDiv = document.createElement('div');
-                var nodeP = document.createElement('p');
+                var nodeDiv = document.createElement("div");
+                var nodeP = document.createElement("p");
                 var nodeText = document.createTextNode(JSONresponseArray[i].name);
                 nodeP.appendChild(nodeText);
                 nodeDiv.appendChild(nodeP);
@@ -107,9 +107,9 @@ function getFoldersList(page, course) {
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
-	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/' + course.courseJSON.id
-        + '/folders?page=' + page + '&per_page=100');
+	request.addEventListener("load", requestListener);
+	request.open("GET", "https://canvas.ucdavis.edu/api/v1/courses/" + course.courseJSON.id
+        + "/folders?page=" + page + "&per_page=100");
     request.send();
 }
 
@@ -117,18 +117,18 @@ function getCoursesList(page) {
     // function that is called when data is returned
     function requestListener() {
         // remove while(1); from beginning of returned JSON string
-        var JSONresponseArray = JSON.parse(this.responseText.split('while(1);',2)[1]);
+        var JSONresponseArray = JSON.parse(this.responseText.split("while(1);", 2)[1]);
         // sort courses by term
         JSONresponseArray.sort(function(a, b){return b.enrollment_term_id - a.enrollment_term_id});
         // get div for course list
-        var coursesDiv = document.getElementById('courses');
+        var coursesDiv = document.getElementById("courses");
 
         // add course names to page
         for (i = 0; i < JSONresponseArray.length; i++) {
-            if (JSONresponseArray[i].hasOwnProperty('name')) {
-                var courseDiv = document.createElement('div');
-                var courseNameHeader = document.createElement('h1');
-                var courseNameP = document.createElement('p');
+            if (JSONresponseArray[i].hasOwnProperty("name")) {
+                var courseDiv = document.createElement("div");
+                var courseNameHeader = document.createElement("h1");
+                var courseNameP = document.createElement("p");
                 var courseName = document.createTextNode(JSONresponseArray[i].name);
                 courseNameP.appendChild(courseName);
                 courseNameHeader.appendChild(courseNameP);
@@ -149,9 +149,9 @@ function getCoursesList(page) {
 
 	var request = new XMLHttpRequest();
     // call requestListener when request is loaded
-	request.addEventListener('load', requestListener);
-	request.open('GET', 'https://canvas.ucdavis.edu/api/v1/courses/?page=' + page
-        + '&per_page=100');
+	request.addEventListener("load", requestListener);
+	request.open("GET", "https://canvas.ucdavis.edu/api/v1/courses/?page=" + page
+        + "&per_page=100");
     request.send();
 }
 
