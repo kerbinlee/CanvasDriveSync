@@ -22,6 +22,8 @@
         "identity",
         "tabs",
         "https://canvas.ucdavis.edu/",
-        "*://*.googleapis.com/*"
+        "https://www.googleapis.com/",
+        "https://*.instructure.com/",
+        "https://*.amazonaws.com/"
     ]
 }

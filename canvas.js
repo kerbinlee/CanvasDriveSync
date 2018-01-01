@@ -156,3 +156,15 @@ function getCoursesList(page) {
 }
 
 getCoursesList(1);
+
+function getFile(fileName, url) {
+    var xhr = new XMLHttpRequest();
+    // call initiateUpload from drive.js when file is downloaded
+    xhr.addEventListener("load", function() {
+        initiateUpload(fileName, this.getResponseHeader("content-type"), this.response);
+    });
+    xhr.open("GET", url);
+    // get binary file contents
+    xhr.responseType = "blob";
+    xhr.send();
+}
