@@ -2,6 +2,7 @@
 function course(courseJSONobj, courseDiv) {
     this.courseJSON = courseJSONobj;
     this.div = courseDiv;
+    this.filesAndFoldersDiv;
     this.folderRootId;
     this.foldersMap;
     this.filesList;
@@ -40,9 +41,9 @@ function getFilesList(page, course) {
             // nodeP.appendChild(nodeA);
             nodeDiv.appendChild(nodeA);
 
-            // if file is located in root rolder, add file directly to course div
+            // if file is located in root rolder, add file directly to course filesAndFoldersDiv
             if (JSONresponseArray[i].folder_id == course.folderRootId) {
-                course.div.appendChild(nodeDiv);
+                course.filesAndFoldersDiv.appendChild(nodeDiv);
             } else { // else add files to respective folder div
                 var folderDiv = course.foldersMap.get(JSONresponseArray[i].folder_id).div;
                 folderDiv.appendChild(nodeDiv);
@@ -52,6 +53,8 @@ function getFilesList(page, course) {
         // if results were returned, get next page of files
         if (JSONresponseArray.length > 0) {
             getFilesList(page + 1, course);
+        } else { // else display files and folders div
+            course.div.appendChild(course.filesAndFoldersDiv);
         }
     }
 
@@ -80,8 +83,11 @@ function getFoldersList(page, course) {
             if (JSONresponseArray[i].parent_folder_id == null) {
                 course.folderRootId = JSONresponseArray[i].id;
 
+                // create div for course files and folders
+                course.filesAndFoldersDiv = document.createElement("div");
+
                 // add folder to map with id as key and folder object as value
-                var folderObj = new folder(JSONresponseArray[i], course.div);
+                var folderObj = new folder(JSONresponseArray[i], course.filesAndFoldersDiv);
                 course.foldersMap.set(JSONresponseArray[i].id, folderObj);
             } else { // else create div for folder and add to map
                 var nodeDiv = document.createElement("div");
