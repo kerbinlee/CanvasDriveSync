@@ -24,6 +24,16 @@ function displayFolders(course) {
     });
 }
 
+// closure for one click upload
+function makeUploadFile(JSONresponse, course) {
+    return function() {
+        var newFolders = [];
+        // set up directory structure in Google Drive if it does not already exist
+        // also downloads file from Canvas and uploads to Google Drive
+        checkForNeededFolders(JSONresponse.folder_id, newFolders, JSONresponse, course);
+    }
+}
+
 function getFilesList(page, course) {
     // function that is called when data is returned
     function requestListener() {
@@ -40,6 +50,12 @@ function getFilesList(page, course) {
             nodeA.innerHTML = JSONresponseArray[i].display_name;
             // nodeP.appendChild(nodeA);
             nodeDiv.appendChild(nodeA);
+
+            // sync button for one click upload to Google Drive
+            var uploadImg = document.createElement("img");
+            uploadImg.src = "ic_sync_black_24dp_1x.png";
+            uploadImg.onclick = makeUploadFile(JSONresponseArray[i], course);
+            nodeDiv.appendChild(uploadImg);
 
             // if file is located in root rolder, add file directly to course filesAndFoldersDiv
             if (JSONresponseArray[i].folder_id == course.folderRootId) {
@@ -163,13 +179,14 @@ function getCoursesList(page) {
 
 getCoursesList(1);
 
-function getFile(fileName, url) {
+function getFile(JSONresponse) {
     var xhr = new XMLHttpRequest();
     // call initiateUpload from drive.js when file is downloaded
     xhr.addEventListener("load", function() {
-        initiateUpload(fileName, this.getResponseHeader("content-type"), this.response);
+        getDriveIdByCanvasFolderId(JSONresponse, this.getResponseHeader("content-type"),
+            this.response);
     });
-    xhr.open("GET", url);
+    xhr.open("GET", JSONresponse.url);
     // get binary file contents
     xhr.responseType = "blob";
     xhr.send();
