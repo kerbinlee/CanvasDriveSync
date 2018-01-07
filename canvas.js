@@ -43,19 +43,36 @@ function getFilesList(page, course) {
         // create file name div
         for (i = 0; i < JSONresponseArray.length; i++) {
             var nodeDiv = document.createElement("div");
-            // var nodeP = document.createElement("p");
-            var nodeA = document.createElement("a");
-            nodeA.setAttribute("href", JSONresponseArray[i].url);
-            // var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
-            nodeA.innerHTML = JSONresponseArray[i].display_name;
-            // nodeP.appendChild(nodeA);
-            nodeDiv.appendChild(nodeA);
 
-            // sync button for one click upload to Google Drive
-            var uploadImg = document.createElement("img");
-            uploadImg.src = "ic_sync_black_24dp_1x.png";
-            uploadImg.onclick = makeUploadFile(JSONresponseArray[i], course);
-            nodeDiv.appendChild(uploadImg);
+            // if file is not accessible for the user
+            if (JSONresponseArray[i].hidden == true
+                || JSONresponseArray[i].hidden_for_user == true
+                || JSONresponseArray[i].locked == true
+                || JSONresponseArray[i].locked_for_user == true) {
+                // display lock icon for inaccessible file
+                var lockOutlineImg = document.createElement("img");
+                lockOutlineImg.src = "assets/material/lock_outline/ic_lock_outline_black_24dp_1x.png";
+                nodeDiv.appendChild(lockOutlineImg);
+
+                // display name of file
+                var fileNameP = document.createElement("p");
+                fileNameP.className = "fileNameP";
+                var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
+                fileNameP.appendChild(nodeText);
+                nodeDiv.appendChild(fileNameP);
+            } else { // file is accessible to user
+                // display sync button for one click upload to Google Drive
+                var uploadImg = document.createElement("img");
+                uploadImg.src = "ic_sync_black_24dp_1x.png";
+                uploadImg.onclick = makeUploadFile(JSONresponseArray[i], course);
+                nodeDiv.appendChild(uploadImg);
+
+                // display name of file with download link
+                var nodeA = document.createElement("a");
+                nodeA.setAttribute("href", JSONresponseArray[i].url);
+                nodeA.innerHTML = JSONresponseArray[i].display_name;
+                nodeDiv.appendChild(nodeA);
+            }
 
             // if file is located in root rolder, add file directly to course filesAndFoldersDiv
             if (JSONresponseArray[i].folder_id == course.folderRootId) {

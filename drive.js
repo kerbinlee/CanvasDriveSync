@@ -59,6 +59,31 @@ function initiateUploadFile(JSONresponse, fileType, fileBlob, parentFolderId) {
         "parents": [parentFolderId]}));
 }
 
+function checkSyncStatus(JSONresponse) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://www.googleapis.com/drive/v3/files?q=appProperties+has+%7B+key%3D'canvasId'+and+value%3D'"
+        + JSONresponse.id + "'+%7D&fields=files%2FappProperties");
+    xhr.addEventListener("load", function() {
+        var JSONresponseArray = JSON.parse(xhr.responseText).files
+        // if file is found, check if it needs to be synced
+        if (JSONresponseArray.length > 0) {
+            var appProperties = JSONresponseArray[0].appProperties;
+            // if file properties are different on Canvas and Drive, sync
+            if (appProperties.folderId != JSONresponse.folder_id
+                || appProperties.createdAt != JSONresponse.created_at
+                || appProperties.updatedAt != JSONresponse.updated_at
+                || appProperties.modifiedAt != JSONresponse.modified_at) {
+
+                getFile(JSONresponse);
+            }
+        } else { //sync because file does not exist on drive
+            getFile(JSONresponse);
+        }
+    });
+    xhr.setRequestHeader("Authorization", "Bearer " + googleAuthToken);
+    xhr.send();
+}
+
 // create needed folders on Google Drive
 // parentFolderId is referring to Google Drive file id
 function createFolders(newFolders, course, JSONresponse, parentFolderId) {
@@ -85,8 +110,8 @@ function createFolders(newFolders, course, JSONresponse, parentFolderId) {
         // send request with folder name as body
         xhr.send(JSON.stringify({"name": folderJSONresponse.name, "mimeType": "application/vnd.google-apps.folder",
             "parents": [parentFolderId], "appProperties": appProperties}));
-    } else { // else upload the file
-        getFile(JSONresponse);
+    } else { // else check if file needs to be synced and upload the file if needed
+        checkSyncStatus(JSONresponse);
     }
 }
 

@@ -1,3 +1,7 @@
 div {
     padding-left: 5px;
 }
+
+.fileNameP {
+    display: inline-block;
+}
