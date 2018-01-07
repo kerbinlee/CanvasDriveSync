@@ -124,7 +124,11 @@ function getFoldersList(page, course) {
                 course.foldersMap.set(JSONresponseArray[i].id, folderObj);
             } else { // else create div for folder and add to map
                 var nodeDiv = document.createElement("div");
+                var folderImg = document.createElement("img");
+                folderImg.src = "assets/material/folder_open/ic_folder_open_black_24dp_1x.png";
+                nodeDiv.appendChild(folderImg);
                 var nodeP = document.createElement("p");
+                nodeP.className = "folderNameP";
                 var nodeText = document.createTextNode(JSONresponseArray[i].name);
                 nodeP.appendChild(nodeText);
                 nodeDiv.appendChild(nodeP);
