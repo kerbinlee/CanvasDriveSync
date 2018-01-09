@@ -34,6 +34,21 @@ function makeUploadFile(JSONresponse, course) {
     }
 }
 
+// closure to add link to preview document or download it if preview is not possible
+function makePreviewLink(fileId) {
+    return function() {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", function() {
+            var JSONresponse = JSON.parse(this.responseText.split("while(1);", 2)[1]);;
+            console.log(JSONresponse.public_url);
+            chrome.tabs.create({ url: JSONresponse.public_url });
+        });
+        xhr.open("GET", "https://canvas.ucdavis.edu/api/v1/files/" + fileId
+            + "/public_url");
+        xhr.send();
+    }
+}
+
 function getFilesList(page, course) {
     // function that is called when data is returned
     function requestListener() {
@@ -54,7 +69,7 @@ function getFilesList(page, course) {
                 lockOutlineImg.src = "assets/material/lock_outline/ic_lock_outline_black_24dp_1x.png";
                 nodeDiv.appendChild(lockOutlineImg);
 
-                // display name of file
+                // display file name
                 var fileNameP = document.createElement("p");
                 fileNameP.className = "fileNameP";
                 var nodeText = document.createTextNode(JSONresponseArray[i].display_name);
@@ -62,14 +77,23 @@ function getFilesList(page, course) {
                 nodeDiv.appendChild(fileNameP);
             } else { // file is accessible to user
                 // display sync button for one click upload to Google Drive
-                var uploadImg = document.createElement("img");
-                uploadImg.src = "ic_sync_black_24dp_1x.png";
-                uploadImg.onclick = makeUploadFile(JSONresponseArray[i], course);
-                nodeDiv.appendChild(uploadImg);
+                var syncImg = document.createElement("img");
+                syncImg.src = "assets/material/sync/ic_sync_black_24dp_1x.png";
+                syncImg.onclick = makeUploadFile(JSONresponseArray[i], course);
+                nodeDiv.appendChild(syncImg);
 
-                // display name of file with download link
+                // display download icon
+                var downloadA = document.createElement("a");
+                var downloadImg = document.createElement("img");
+                downloadImg.src = "assets/material/file_download/ic_file_download_black_24dp_1x.png";
+                downloadA.setAttribute("href", JSONresponseArray[i].url);
+                downloadA.appendChild(downloadImg);
+                nodeDiv.appendChild(downloadA);
+
+                // display name of file with preview link
                 var nodeA = document.createElement("a");
-                nodeA.setAttribute("href", JSONresponseArray[i].url);
+                nodeA.setAttribute("href", "javascript:void(0);");
+                nodeA.onclick = makePreviewLink(JSONresponseArray[i].id);
                 nodeA.innerHTML = JSONresponseArray[i].display_name;
                 nodeDiv.appendChild(nodeA);
             }

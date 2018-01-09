@@ -9,7 +9,7 @@
         ]
     },
     "browser_action": {
-        "default_icon": "ic_sync_black_24dp_2x.png"
+        "default_icon": "assets/material/sync/ic_sync_black_24dp_2x.png"
     },
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsafgDHTBqMAUP76c713KkeyeYoMxEcZLqFxWQpb9HzcxSmsVZFvKoC4MCuUZFgKj52qPxbrcbhiP0dPwUKYK5TjqIljA3OrDyD7DD36kibtQwke097bS9UtLUx5MLtpnYJmC7lzHjoueqvjasZ9DmaWsuO2QJEAZDrsjAd2QT7VFHiQLm2P7ys2j45gXX7znmchlbn3t6E5PDwyn0bpaIsnW/0FtqS8jUgFs7UdxFD8zYGu18twN5VqrwhPgUaLNhYdWvL13YtfhEshR4LnoWAFTVW3jxkAixCqNccG2BZfxMDuo2aKoJMeYs7Gafk9l8MirFJpfxRt76L7DTVTKxwIDAQAB",
     "oauth2": {
