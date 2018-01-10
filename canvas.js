@@ -183,12 +183,40 @@ function getFoldersList(page, course) {
 function getCoursesList(page) {
     // function that is called when data is returned
     function requestListener() {
+        // get div for course list
+        var coursesDiv = document.getElementById("courses");
+
+        // if Canvas says unauthorized
+        if (this.status == 401) {
+            var errorP = document.createElement("p");
+            var errorText = document.createTextNode("Canvas says you are unauthorized. "
+                + "Try signing in at ");
+            errorP.appendChild(errorText);
+
+            var canvasLink = document.createElement("a");
+            canvasLink.href = "https://canvas.ucdavis.edu";
+            var canvasLinkText = document.createTextNode("canvas.ucdavis.edu");
+            canvasLink.appendChild(canvasLinkText);
+            errorP.appendChild(canvasLink);
+
+            errorText = document.createTextNode(" and then relaunch Canvas-Google Drive Sync");
+            errorP.appendChild(errorText);
+            coursesDiv.appendChild(errorP);
+
+            return;
+        } else if (this.status != 200) { // else if not ok status
+            var errorP = document.createElement("p");
+            var errorText = document.createTextNode("Canvas returned unknown error.");
+            errorP.appendChild(errorText);
+            coursesDiv.appendChild(errorP);
+
+            return;
+        }
+
         // remove while(1); from beginning of returned JSON string
         var JSONresponseArray = JSON.parse(this.responseText.split("while(1);", 2)[1]);
         // sort courses by term
         JSONresponseArray.sort(function(a, b){return b.enrollment_term_id - a.enrollment_term_id});
-        // get div for course list
-        var coursesDiv = document.getElementById("courses");
 
         // add course names to page
         for (i = 0; i < JSONresponseArray.length; i++) {
