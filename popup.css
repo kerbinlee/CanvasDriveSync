@@ -1,7 +1,7 @@
-div {
+.folderDiv, .fileDiv {
     padding-left: 25px;
 }
 
-.fileNameP, .folderNameP {
+.fileNameP, .folderNameP, .syncDiv {
     display: inline-block;
 }
